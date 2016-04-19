@@ -17,4 +17,10 @@ attr_reader :balance
   	@balance -= amount
   end
 
+  def touch_in
+  	true
+  end
+  def in_journey?
+  	false
+  end
 end

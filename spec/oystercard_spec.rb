@@ -1,7 +1,7 @@
 load "oystercard.rb"
 
 describe Oystercard do
-	
+
 	context "balance" do
 		it "shows the balance" do
 	  expect(subject.balance).to eq 0
@@ -22,16 +22,23 @@ describe Oystercard do
 	  end
 	end
   context "contact" do
-		it "touchs card" do
+		it "touches card in" do
 			subject.touch_in
 			expect(subject).to be_in_journey
 		end
+
+    it "touches card out" do
+      subject.touch_in
+      subject.touch_out
+      expect(subject).not_to be_in_journey
+    end
+
 		it "confirms user is journey" do
 			expect(subject).not_to be_in_journey
 		end
 
 
-	end	
+	end
 
 
 

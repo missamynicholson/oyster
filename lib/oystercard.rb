@@ -20,6 +20,7 @@ attr_reader :balance, :touched_in
 
   def touch_in
   	fail "You do not have the minimum balance for travel" if @balance < MINIMUM_BALANCE
+    deduct(MINIMUM_BALANCE)
     @touched_in = true
   end
 

@@ -14,10 +14,6 @@ attr_reader :balance, :touched_in
     @balance += amount
   end
 
-  def deduct(amount)
-  	@balance -= amount
-  end
-
   def touch_in
   	fail "You do not have the minimum balance for travel" if @balance < MINIMUM_BALANCE
     deduct(MINIMUM_BALANCE)
@@ -30,6 +26,13 @@ attr_reader :balance, :touched_in
 
   def in_journey?
   	@touched_in
+  end
+
+
+  private
+
+  def deduct(amount)
+    @balance -= amount
   end
 
 end

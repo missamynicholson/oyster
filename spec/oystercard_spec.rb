@@ -12,10 +12,6 @@ describe Oystercard do
 	    expect{ subject.top_up Oystercard::MINIMUM_BALANCE }.to change{ subject.balance }.by Oystercard::MINIMUM_BALANCE
 	  end
 
-	  it "deducts the money from the balance" do
-	  	expect{ subject.deduct Oystercard::MINIMUM_BALANCE }.to change{ subject.balance }.by -Oystercard::MINIMUM_BALANCE
-	  end
-
 	  it 'cannot top up above the balance limit' do
 	    balance_limit = Oystercard::BALANCE_LIMIT
 	    subject.top_up(balance_limit)
@@ -33,10 +29,10 @@ describe "Touching in and out" do
       subject.top_up(Oystercard::MINIMUM_BALANCE)
     end
 
-		it "Charges fare upon touching card in" do
-			subject.touch_in
-			expect{ subject.deduct Oystercard::MINIMUM_BALANCE }.to change{ subject.balance }.by -Oystercard::MINIMUM_BALANCE
-		end
+    it "touches card in" do
+      subject.touch_in
+      expect(subject).to be_in_journey
+    end
 
     it "touches card out" do
       subject.touch_in

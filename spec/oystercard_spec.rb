@@ -25,19 +25,32 @@ describe "Touching in and out" do
 
   context "Card has enough money" do
 
+    let(:entry_station) { double :entry_station }
+
     before do
       subject.top_up(Oystercard::MINIMUM_BALANCE)
     end
 
     it "touches card in" do
-      subject.touch_in
+      subject.touch_in(entry_station)
       expect(subject).to be_in_journey
     end
 
+    it "stores the station where they touched in" do
+      subject.touch_in(entry_station)
+      expect(subject.entry_station).to eq entry_station
+    end
+
     it "touches card out" do
-      subject.touch_in
+      subject.touch_in(entry_station)
       subject.touch_out
       expect(subject).not_to be_in_journey
+    end
+
+    it "forgets station on touch out" do
+      subject.touch_in(entry_station)
+      subject.touch_out
+      expect(subject.entry_station).to be_nil
     end
 
 		it "confirms user is journey" do
@@ -48,8 +61,10 @@ describe "Touching in and out" do
 
   context "No money on the card" do
 
+    let(:entry_station) { double :entry_station }
+
     it "Does not allow travel below minimum balance" do
-      expect {subject.touch_in}.to raise_error "You do not have the minimum balance for travel"
+      expect {subject.touch_in(entry_station)}.to raise_error "You do not have the minimum balance for travel"
     end
 	end
 end

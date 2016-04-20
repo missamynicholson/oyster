@@ -3,7 +3,7 @@ require 'oystercard'
 
 describe Journey do
   subject(:journey) { described_class.new}
-  let(:station) { double :station }
+  let(:station) { double :station, zone: 1 }
 
   it "starts a journey" do
     expect(journey.start(station)).to eq station
@@ -16,33 +16,24 @@ describe Journey do
 
   context "Card has enough money" do
 
-      it "confirms user is not in journey at start" do
-        expect(journey).not_to be_in_journey
-      end
-
-      it "starts journey" do
-        journey.start(station)
-        expect(journey).to be_in_journey
-      end
-
-      it "ends journey" do
-        journey.start(station)
-        journey.finish(station)
-        expect(journey).not_to be_in_journey
-      end
-
       it "forgets entry station when journey ends" do
         journey.start(station)
         journey.finish(station)
         expect(journey.entry_station).to be_nil
       end
 
-      it "raises an error if didn't touch in" do
-        expect(journey.finish(station)).to eq 1
+      it "return penalty fare if didn't touch in" do
+        expect(journey.finish(station)).to eq Journey::PENALTY_FARE
       end
 
-      it "raises an error if didn't touch out" do
-        expect(journey.finish(nil)).to eq 1
+      it "return penalty fare if didn't touch out" do
+        journey.start(station)
+        expect(journey.finish(nil)).to eq Journey::PENALTY_FARE
+      end
+
+      it "charge minimum fare if complete journey" do
+        journey.start(station)
+        expect(journey.finish(station)).to eq 1
       end
 
       it "returns journey not complete" do

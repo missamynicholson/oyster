@@ -2,6 +2,9 @@ load "oystercard.rb"
 
 describe Oystercard do
 
+let(:entry_station) { double :entry_station }
+let(:exit_station) { double :exit_station }
+
   context "balance" do
 
 		it "shows the balance" do
@@ -25,8 +28,6 @@ describe "Touching in and out" do
 
   context "Card has enough money" do
 
-    let(:entry_station) { double :entry_station }
-
     before do
       subject.top_up(Oystercard::MINIMUM_BALANCE)
     end
@@ -41,15 +42,21 @@ describe "Touching in and out" do
       expect(subject.entry_station).to eq entry_station
     end
 
+    it "stores the station where they touched out" do
+      subject.touch_in(entry_station)
+      subject.touch_out(exit_station)
+      expect(subject.exit_station).to eq exit_station
+    end
+
     it "touches card out" do
       subject.touch_in(entry_station)
-      subject.touch_out
+      subject.touch_out(exit_station)
       expect(subject).not_to be_in_journey
     end
 
     it "forgets station on touch out" do
       subject.touch_in(entry_station)
-      subject.touch_out
+      subject.touch_out(exit_station)
       expect(subject.entry_station).to be_nil
     end
 
@@ -61,12 +68,30 @@ describe "Touching in and out" do
 
   context "No money on the card" do
 
-    let(:entry_station) { double :entry_station }
-
     it "Does not allow travel below minimum balance" do
       expect {subject.touch_in(entry_station)}.to raise_error "You do not have the minimum balance for travel"
     end
 	end
+end
+
+  context "Journey" do
+
+    before do
+      subject.top_up(Oystercard::MINIMUM_BALANCE)
+    end
+
+    it "Checks that the journey list is empty before travelling" do
+      expect(subject.list_of_journeys).to be_empty
+    end
+
+    it "is a hash consisting of entry and exit stations" do
+      journey = Hash.new
+      journey[entry_station] = exit_station
+      subject.touch_in(entry_station)
+      subject.touch_out(exit_station)
+      expect(subject.list_of_journeys).to include journey
+    end
+
 end
 end
 

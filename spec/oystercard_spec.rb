@@ -4,16 +4,18 @@ describe Oystercard do
 
 let(:entry_station) { double :entry_station }
 let(:exit_station) { double :exit_station }
+let(:oystercard_topped) do
+    oystercard = Oystercard.new
+    oystercard.top_up(Oystercard::MINIMUM_BALANCE)
+    oystercard.touch_in(entry_station)
+    oystercard
+  end
 
   context "balance" do
 
-		it "shows the balance" do
-	  expect(subject.balance).to eq 0
+		it "shows the balanceas zero with initialized" do
+	   expect(subject.balance).to eq 0
 		end
-
-	  it "tops up the balance" do
-	    expect{ subject.top_up Oystercard::MINIMUM_BALANCE }.to change{ subject.balance }.by Oystercard::MINIMUM_BALANCE
-	  end
 
 	  it 'cannot top up above the balance limit' do
 	    balance_limit = Oystercard::BALANCE_LIMIT
@@ -25,44 +27,25 @@ let(:exit_station) { double :exit_station }
 
 
 describe "Touching in and out" do
-
   context "Card has enough money" do
 
-    before do
-      subject.top_up(Oystercard::MINIMUM_BALANCE)
-    end
-
-    it "touches card in" do
-      subject.touch_in(entry_station)
-      expect(subject).to be_in_journey
-    end
-
-    it "stores the station where they touched in" do
-      subject.touch_in(entry_station)
-      expect(subject.entry_station).to eq entry_station
-    end
-
-    it "stores the station where they touched out" do
-      subject.touch_in(entry_station)
-      subject.touch_out(exit_station)
-      expect(subject.exit_station).to eq exit_station
-    end
-
-    it "touches card out" do
-      subject.touch_in(entry_station)
-      subject.touch_out(exit_station)
+    it "confirms user is not in journey" do
       expect(subject).not_to be_in_journey
     end
 
-    it "forgets station on touch out" do
-      subject.touch_in(entry_station)
-      subject.touch_out(exit_station)
-      expect(subject.entry_station).to be_nil
+    it "touches card in" do
+      expect(oystercard_topped).to be_in_journey
     end
 
-		it "confirms user is journey" do
-			expect(subject).not_to be_in_journey
-		end
+    it "touches card out" do
+      oystercard_topped.touch_out(exit_station)
+      expect(oystercard_topped).not_to be_in_journey
+    end
+
+    it "forgets station on touch out" do
+      oystercard_topped.touch_out(exit_station)
+      expect(oystercard_topped.entry_station).to be_nil
+    end
 
   end
 
@@ -74,7 +57,9 @@ describe "Touching in and out" do
 	end
 end
 
-  context "Journey" do
+  context "completed journeys" do
+  let(:journey){ {entry_station => exit_station} }
+
 
     before do
       subject.top_up(Oystercard::MINIMUM_BALANCE)
@@ -85,11 +70,8 @@ end
     end
 
     it "is a hash consisting of entry and exit stations" do
-      journey = Hash.new
-      journey[entry_station] = exit_station
-      subject.touch_in(entry_station)
-      subject.touch_out(exit_station)
-      expect(subject.list_of_journeys).to include journey
+      oystercard_topped.touch_out(exit_station)
+      expect(oystercard_topped.list_of_journeys).to include journey
     end
 
 end

@@ -17,13 +17,11 @@ class Journey
   private
 
   def complete?
-    @current_journey.keys[0].values[0].nil? || @current_journey.values[0].values[0].nil? ? false : true
+    current_journey[:entry_station].nil? || current_journey[:exit_station].nil? ? false : true
   end
 
   def amount
-    zone_entry = @current_journey.keys[0].values[0].zone
-    zone_exit = @current_journey.values[0].values[0].zone
-    diff = (zone_exit - zone_entry).abs
+    diff = (current_journey[:exit_station].zone - current_journey[:entry_station].zone).abs
     1 + diff
   end
 

@@ -6,15 +6,15 @@ class JourneyLog
 
   def initialize
     @journeys = []
-    @current_journey = {{entry_station: nil} => {exit_station: nil}}
+    @current_journey = {entry_station: nil, exit_station: nil}
   end
 
   def start(entry_station)
-    @current_journey = {{entry_station: entry_station} => {exit_station: nil}}
+    @current_journey[:entry_station] = entry_station
   end
 
   def finish(exit_station)
-    @current_journey.values[0][:exit_station] = exit_station
+    @current_journey[:exit_station] = exit_station
     complete_journey
   end
 
@@ -22,16 +22,16 @@ class JourneyLog
     journey = Journey.new(current_journey: current_journey)
     @journeys << journey
     return journey.fare
-     @current_journey = {{entry_station: nil} => {exit_station: nil}}
+    @current_journey = {entry_station: nil, exit_station: nil}
   end
 
   def in_journey?
-    !!current_journey.keys[0].values[0]
+    !!current_journey[:entry_station]
   end
 
-  def journeys
-    @journeys.dup
-  end
+   def journeys
+     @journeys.dup
+   end
 
 end
 

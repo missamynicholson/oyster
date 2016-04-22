@@ -6,8 +6,11 @@ class Journey
 
   attr_reader :current_journey
 
-  def fare(current_journey)
+  def initialize(current_journey:)
     @current_journey = current_journey
+  end
+
+  def fare
     complete? ? amount : PENALTY_FARE
   end
 

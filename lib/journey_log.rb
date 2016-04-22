@@ -11,12 +11,11 @@ class JourneyLog
 
   def start(entry_station)
     @current_journey = {{entry_station: entry_station} => {exit_station: nil}}
-
   end
 
   def finish(exit_station)
-      @current_journey.values[0][:exit_station] = exit_station
-      complete_journey
+    @current_journey.values[0][:exit_station] = exit_station
+    complete_journey
   end
 
   def complete_journey
@@ -29,9 +28,9 @@ class JourneyLog
     !!current_journey.keys[0].values[0]
   end
 
-def journeys
-  @journeys.dup
-end
+  def journeys
+    @journeys.dup
+  end
 
 
 end

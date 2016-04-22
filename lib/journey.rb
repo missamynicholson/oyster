@@ -4,12 +4,14 @@ class Journey
   MINIMUM_FARE = 1
   PENALTY_FARE = 6
 
-attr_reader :current_journey
+  attr_reader :current_journey
 
   def fare(current_journey)
     @current_journey = current_journey
     complete? ? amount : PENALTY_FARE
   end
+
+  private
 
   def complete?
     @current_journey.keys[0].values[0].nil? || @current_journey.values[0].values[0].nil? ? false : true
